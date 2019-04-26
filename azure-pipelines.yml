@@ -12,6 +12,15 @@ pool:
 variables:
   buildConfiguration: 'Release'
 
+#- script: dotnet build --configuration $(buildConfiguration) --output $(build.ArtifactStagingDirectory)
 steps:
-- script: dotnet build --configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)
+- powershell: .\build.ps1
+- task: CopyFiles@2
+  inputs:
+    contents: '_buildOutput\**'
+    targetFolder: $(Build.ArtifactStagingDirectory)
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: $(Build.ArtifactStagingDirectory)
+    artifactName: MyBuildOutputs
   displayName: 'dotnet build $(buildConfiguration)'
